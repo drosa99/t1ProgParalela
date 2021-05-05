@@ -22,9 +22,21 @@ echo JOB_ID:
 echo `echo $PBS_JOBID`
 echo ################
 
+export OMP_NUM_THREADS=2
+export OMP_SCHEDULE="dynamic" 
+./solParalV4 > resFinal1_2.txt 2> saidaFinal1_2.txt
+
+export OMP_NUM_THREADS=4
+export OMP_SCHEDULE="dynamic" 
+./solParalV4 > resFinal1_4.txt 2> saidaFinal1_4.txt
+
+export OMP_NUM_THREADS=8
+export OMP_SCHEDULE="dynamic" 
+./solParalV4 > resFinal1_8.txt 2> saidaFinal1_8.txt
+
 export OMP_NUM_THREADS=16
 export OMP_SCHEDULE="dynamic" 
-./solParalV4 > outRV4Dynamic16.txt 2> outTV4Dynamic16.txt
+./solParalV4 > resFinal1_16.txt 2> saidaFinal1_16.txt
 
 ############
 echo Final Time is `date`
