@@ -1,7 +1,6 @@
-/* solution.c (Roland Teodorowitsch; 15 abr. 2021)
- * Compilation: gcc solution.c -o solution -fopenmp
- * Adapted from: https://www.geeksforgeeks.org/maximum-sum-subsequence-of-length-k/
- */
+/*
+*V2: laço do L colocado por fora, incluido schedule(runtime)
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +16,7 @@
 
 #define MAX(A,B) (((A)>(B))?(A):(B))
 
+//nao paralelizar aqui
 void create_sequence(int *v, int size, int seed) {
     int i;
     srand(seed);
@@ -29,6 +29,8 @@ int maximum_sum_subsequence(int *arr, int n, int k)  {
     int **dp;
 
     dp = (int **)malloc(n * sizeof(int *));
+
+    //paralelizar aqui so vai valer a pena para maiores valores
     for (i=0; i<n; i++)
          dp[i] = (int *)malloc((k+1) * sizeof(int));
     for (i = 0; i < n; i++) {
@@ -37,17 +39,27 @@ int maximum_sum_subsequence(int *arr, int n, int k)  {
         for (j = 2; j <= k; j++)
             dp[i][j] = -1;
     }
-    for (i = 1; i < n; i++) {
-        for (j = 0; j < i; j++) {
-            if (arr[j] < arr[i]) {
-                for (l = 1; l <= k - 1; l++) {
-                    if (dp[j][l] != -1) {
-                        dp[i][l + 1] = MAX(dp[i][l + 1],dp[j][l] + arr[i]);
-                    }
+    //////
+
+
+    //essa inversao do for leva mais tempo com poucos processadores pois retirou uma condicao de execução que tinha
+    for (l = 1; l <= k - 1; l++) {
+        
+        //colocando o private eu digo que cada thread deve ter o seu proprio valor de j
+        //usando schedule(runtime) para parametrizar o balanceamento
+        #pragma omp parallel for private(j) schedule(runtime)
+        for (i = 1; i < n; i++) {
+            for (j = 0; j < i; j++) {
+                if (arr[j] < arr[i] && dp[j][l] != -1) {  
+                    dp[i][l + 1] = MAX(dp[i][l + 1],dp[j][l] + arr[i]);
                 }
             }
         }
     }
+    
+
+    ////////////////////
+
 
     for (i = 0; i < n; i++) {
         if (ans < dp[i][k])
@@ -68,6 +80,7 @@ int main() {
     create_sequence(v,SIZE,1);
     k = K;
     for (n=START; n<=SIZE; n+=STEP) {
+        
         start = omp_get_wtime();
         printf("%d\n", maximum_sum_subsequence(v, n, k));
         finish = omp_get_wtime();
