@@ -56,29 +56,22 @@ echo `echo $PBS_JOBID`
 echo ################
 
 
+export OMP_NUM_THREADS=2
+export OMP_SCHEDULE="guided" 
+./solParalV2 > outRV2Guided2.txt 2> outTV2Guided2.txt
+
+export OMP_NUM_THREADS=4
+export OMP_SCHEDULE="guided" 
+./solParalV2 > outRV2Guided4.txt 2> outTV2Guided4.txt
+
+export OMP_NUM_THREADS=8
+export OMP_SCHEDULE="guided" 
+./solParalV2 > outRV2Guided8.txt 2> outTV2Guided8.txt
+
 export OMP_NUM_THREADS=16
 export OMP_SCHEDULE="guided" 
 ./solParalV2 > outRV2Guided16.txt 2> outTV2Guided16.txt
 
-export OMP_NUM_THREADS=16
-export OMP_SCHEDULE="guided, 1000" 
-./solParalV2 > outRV2Guided_1000_16.txt 2> outTV2Guided_1000_16.txt
-
-export OMP_NUM_THREADS=16
-export OMP_SCHEDULE="guided, 500" 
-./solParalV2 > outRV2Guided_500_16.txt 2> outTV2Guided_500_16.txt
-
-export OMP_NUM_THREADS=16
-export OMP_SCHEDULE="guided, 100" 
-./solParalV2 > outRV2Guided_100_16.txt 2> outTV2Guided_100_16.txt
-
-export OMP_NUM_THREADS=16
-export OMP_SCHEDULE="guided, 50" 
-./solParalV2 > outRV2Guided_50_16.txt 2> outTV2Guided_50_16.txt
-
-export OMP_NUM_THREADS=16
-export OMP_SCHEDULE="guided, 5" 
-./solParalV2 > outRV2Guided_5_16.txt 2> outTV2Guided_5_16.txt
 
 ############
 echo Final Time is `date`
