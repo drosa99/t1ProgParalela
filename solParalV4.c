@@ -31,7 +31,7 @@ int maximum_sum_subsequence(int *arr, int n, int k)  {
     dp = (int **)malloc(n * sizeof(int *));
 
     //paralelizar aqui so vai valer a pena para maiores valores
-    #pragma omp parallel for if(n > 50000)
+    #pragma omp parallel for if(n > 10000)
     for (i=0; i<n; i++)
          dp[i] = (int *)malloc((k+1) * sizeof(int));
 

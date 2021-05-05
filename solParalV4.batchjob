@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#PBS -m abe
+#PBS -V
+#PBS -l nodes=1:ppn=16:cluster-Grad,walltime=04:00:00
+#PBS -M daniela.rosa.004@acad.pucrs.br
+#PBS -r n
+#PBS -j oe
+#PBS -d /home/pp12710/t1Daniela/t1ProgParalela
+
+################
+echo Running on host `hostname`
+echo
+echo Initial Time is `date`
+echo
+echo Directory is `pwd`
+echo
+echo This jobs runs on the following nodes:
+echo `cat $PBS_NODEFILE | uniq`
+echo
+echo JOB_ID:
+echo `echo $PBS_JOBID`
+echo ################
+
+export OMP_NUM_THREADS=16
+export OMP_SCHEDULE="dynamic" 
+./solParalV4 > outRV4Dynamic16.txt 2> outTV4Dynamic16.txt
+
+############
+echo Final Time is `date`
