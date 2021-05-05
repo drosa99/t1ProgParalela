@@ -57,7 +57,12 @@ echo ################
 
 export OMP_NUM_THREADS=16
 export OMP_SCHEDULE="guided" 
-./solParalV2 > outRV2Guided16.txt 2> outTV2Guided16.txt
+./solParalV3 > outRV3Guided16.txt 2> outTV3Guided16.txt
+
+
+export OMP_NUM_THREADS=16
+export OMP_SCHEDULE="dynamic" 
+./solParalV3 > outRV3Dynamic16.txt 2> outTV3Dynamic16.txt
 
 
 ############
