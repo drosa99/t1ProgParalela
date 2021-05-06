@@ -24,7 +24,7 @@ echo ################
 
 export OMP_NUM_THREADS=16
 export OMP_SCHEDULE="dynamic" 
-./solParalV4 > resFinal1_16.txt 2> saidaFinal1_16.txt
+./solParalV4 > resFinal3_16.txt 2> saidaFinal5_16.txt
 
 ############
 echo Final Time is `date`
