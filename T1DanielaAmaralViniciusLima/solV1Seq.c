@@ -1,6 +1,10 @@
-/*
-*V2: laço do L colocado por fora, incluido schedule(runtime)
-*/
+/* solution.c (Roland Teodorowitsch; 15 abr. 2021)
+ * Compilation: gcc solV1Seq.c -o solution -fopenmp
+ * Adapted from: https://www.geeksforgeeks.org/maximum-sum-subsequence-of-length-k/
+ * 
+ * Solucao sequencial 
+ * Codigo adaptado para remover dependencia de dados do laco iterativo com variavel l
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +20,6 @@
 
 #define MAX(A,B) (((A)>(B))?(A):(B))
 
-//nao paralelizar aqui
 void create_sequence(int *v, int size, int seed) {
     int i;
     srand(seed);
@@ -30,27 +33,16 @@ int maximum_sum_subsequence(int *arr, int n, int k)  {
 
     dp = (int **)malloc(n * sizeof(int *));
 
-    //paralelizar aqui so vai valer a pena para maiores valores
-    #pragma omp parallel for if(n > 10000)
     for (i=0; i<n; i++)
          dp[i] = (int *)malloc((k+1) * sizeof(int));
-
-
     for (i = 0; i < n; i++) {
         // dp[i][0] = -1; // NÃO UTILIZADO
         dp[i][1] = arr[i];
         for (j = 2; j <= k; j++)
             dp[i][j] = -1;
     }
-    //////
 
-
-    //essa inversao do for leva mais tempo com poucos processadores pois retirou uma condicao de execução que tinha
     for (l = 1; l <= k - 1; l++) {
-        
-        //colocando o private eu digo que cada thread deve ter o seu proprio valor de j
-        //usando schedule(runtime) para parametrizar o balanceamento
-        #pragma omp parallel for private(j) schedule(runtime)
         for (i = 1; i < n; i++) {
             for (j = 0; j < i; j++) {
                 if (arr[j] < arr[i] && dp[j][l] != -1) {  
@@ -60,9 +52,6 @@ int maximum_sum_subsequence(int *arr, int n, int k)  {
         }
     }
     
-
-    ////////////////////
-
 
     for (i = 0; i < n; i++) {
         if (ans < dp[i][k])
@@ -79,6 +68,8 @@ int maximum_sum_subsequence(int *arr, int n, int k)  {
 int main() {
     int n, k, v[SIZE];
     double start, finish;
+
+    int num_cpus = omp_get_num_procs();
 
     create_sequence(v,SIZE,1);
     k = K;
